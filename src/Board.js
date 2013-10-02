@@ -79,9 +79,9 @@
     // 
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex){
-      return 1 < _.reduce(this.rows()[rowIndex], function(memo, current){
-        return memo + current;
-      }, 0);
+      return (1 < _.reduce(this.rows()[rowIndex], function(memo, current){
+              return memo + current;
+            }, 0));
     },
 
     // test if any rows on this board contain conflicts
@@ -101,15 +101,15 @@
     // 
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex){
-      return 1 < _.reduce(this.rows(), function(memo, current) {
-        return memo + current[colIndex];
-      }, 0);
+      return (1 < _.reduce(this.rows(), function(memo, current) {
+              return memo + current[colIndex];
+            }, 0));
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function(){
       for (var i = 0; i < this.rows().length; i++) {
-        if(this.hasRowConflictAt(i)){
+        if(this.hasColConflictAt(i)){
           return true;
         }
       }
@@ -123,11 +123,31 @@
     // 
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow){
+      var diagonalIndex = majorDiagonalColumnIndexAtFirstRow;
+      var leng = this.rows().length;
+      var numOfDiagonals = this.rows().length*2 - 1;
+      var diagonal = [];
+      //i think we're over thinking.   enginers:  just make shit work.
+
+      if(diagonalIndex < leng ){
+        for (var i = 0; i <= diagonalIndex; i++) {
+          diagonal.push(this.rows()[leng - 1 - i][diagonalIndex - i]);
+        }
+      }else if(majorDiagonalColumnIndexAtFirstRow > leng - 1){
+        //do second pattern
+      }
+
+
+      // [ this.rows()[this.rows().length-1] , 0 ]
+      // ...
+      // [ 0, this.rows()[this.rows().length - 1] ]
+
       return false; // fixme
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function(){
+
       return false; // fixme
     },
 
