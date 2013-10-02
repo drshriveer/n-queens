@@ -101,11 +101,18 @@
     // 
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex){
-      return false; // fixme
+      return 1 < _.reduce(this.rows(), function(memo, current) {
+        return memo + current[colIndex];
+      }, 0);
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function(){
+      for (var i = 0; i < this.rows().length; i++) {
+        if(this.hasRowConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
