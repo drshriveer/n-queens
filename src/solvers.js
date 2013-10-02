@@ -15,8 +15,16 @@
 window.findNRooksSolution = function(n){
   //make a matrix 
   var board = window.makeBoard(n);
-  
-    
+  var numOfSoltuionsToCheck = n^2;
+
+  while(numOfSoltuionsToCheck){
+
+
+
+    numOfSoltuionsToCheck--;
+  }
+
+
   var solution = undefined; //fixme
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
@@ -35,14 +43,24 @@ window.makeBoard = function(n){
   return board;
 };
 
-window.rookDefends = function(board, xRook, yRook){
+window.addRook = function(board){
+  for (var y = 0; y < board.length; y++) {
+    for (var x = 0; x < Things.length; x++) {
+      if(board[y][x] === 0){
+        board[y][x] = 1;
+        window.rookDefends(board, y, x);
+        return board;
+      }
+    };
+  };
+  return false;
+}
+window.rookDefends = function(board, yRook, xRook){
   for (var i = 0; i < board.length; i++) {
     if(i !== xRook){//push defended Xs
-      //xyPairs.push([i,yRook]);
       board[yRook][i] = -1;
     }
     if(i !== yRook){//push defended Ys
-      //xyPairs.push([xRook,i]);
       board[i][xRook] = -1;
     }
   };
