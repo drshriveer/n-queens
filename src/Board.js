@@ -133,21 +133,33 @@
         for (var i = 0; i <= diagonalIndex; i++) {
           diagonal.push(this.rows()[leng - 1 - i][diagonalIndex - i]);
         }
-      }else if(majorDiagonalColumnIndexAtFirstRow > leng - 1){
-        //do second pattern
       }
-
+      else if(diagonalIndex > leng - 1){
+        var startX = diagonalIndex - leng + 1;
+        for (var i = 0; i < Math.abs(diagonalIndex - numOfDiagonals); i++) {
+          diagonal.push(this.rows()[i][startX + i]);
+        }
+      }
+      console.log(diagonal);
+      return (1 < _.reduce(diagonal, function(memo, val) {
+              return memo + val;
+            }, 0));
 
       // [ this.rows()[this.rows().length-1] , 0 ]
       // ...
       // [ 0, this.rows()[this.rows().length - 1] ]
 
-      return false; // fixme
+      //return false; // fixme
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function(){
-
+      var numOfDiagonals = this.rows().length*2 - 1;
+      for (var i = 0; i < numOfDiagonals; i++) {
+        if(this.hasMajorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
