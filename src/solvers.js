@@ -36,22 +36,18 @@ window.makeBoard = function(n){
 };
 
 window.rookDefends = function(board, xRook, yRook){
-  var xyPairs = [];
-  var n = board.length;
-  
-  for (var i = 0; i < n; i++) {
-    //push Xs 
-    if(i !== xRook){
-      xyPairs.push([i,yRook]);
+  for (var i = 0; i < board.length; i++) {
+    if(i !== xRook){//push defended Xs
+      //xyPairs.push([i,yRook]);
+      board[yRook][i] = -1;
     }
-    //push Ys
-    if(i !== yRook){
-      xyPairs.push([xRook,i]);
+    if(i !== yRook){//push defended Ys
+      //xyPairs.push([xRook,i]);
+      board[i][xRook] = -1;
     }
   };
-
-  return xyPairs;
-}
+  return board;
+};
 
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
