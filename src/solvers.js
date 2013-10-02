@@ -33,6 +33,24 @@ window.makeBoard = function(n){
     board.push(row);
   };
   return board;
+};
+
+window.rookDefends = function(board, xRook, yRook){
+  var xyPairs = [];
+  var n = board.length;
+  
+  for (var i = 0; i < n; i++) {
+    //push Xs 
+    if(i !== xRook){
+      xyPairs.push([i,yRook]);
+    }
+    //push Ys
+    if(i !== yRook){
+      xyPairs.push([xRook,i]);
+    }
+  };
+
+  return xyPairs;
 }
 
 
