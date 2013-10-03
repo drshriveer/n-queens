@@ -76,52 +76,109 @@ window.countNRooksSolutions = function(n){
   return solutionCount;
 };
 
-window.findAllQueenBoards = function(n){
-  var solnBoards = [];
-  var recur = function(rowI, b) {
-    var brd = copyBoard(b); 
-    if(rowI === n){
-      solnBoards.push(copyBoard(brd));
+// window.findAllQueenBoards = function(n){
+//   var solnBoards = [];
+//   var recur = function(rowI, b) {
+//     var brd = copyBoard(b); 
+//     if(rowI === n){
+//       solnBoards.push(copyBoard(brd));
+//       return;
+//     }
+//     _(brd[rowI]).each(function(colVal, colI){
+//       if(colVal === 0){
+//         recur(rowI+1,addQueen(copyBoard(b), rowI, colI));
+//       }
+//     });
+//     return; //if the end of the each loop is reached
+//   };
+//   recur(0, makeBoard(n));
+//   return solnBoards;
+// };
+
+window.makeRow = function(n) {
+  var row = [];
+  for (var i = 0; i < n; i++) {
+    row[i] = 0;
+  }
+  return row;
+};
+
+window.detectMines = function(queenLocations, currentRow, n){
+  //queenLocations should not exceed current number of queen placements!!
+  var mineLocation = makeRow(n);
+  _(queenLocations).each(function(col, row){
+    mineLocation[col] = -1;
+    sideMineA = col + (currentRow - row);
+    sideMineB = col - (currentRow - row);
+    if(sideMineA < n){mineLocation[sideMineA] = -1;}
+    if(sideMineB >= 0){mineLocation[sideMineB] = -1;}
+  });
+  return mineLocation;
+
+  // Add the correct number at the index of queenLocations
+  // When this function begins, queenLocations[currentRow] should be 0
+  // Analyze the previous indices to find if/what the current index should be
+};
+
+window.findAllQueens = function(n){
+  var solns = [];
+
+  var recur = function(queenLocations,currentRow){
+    if(currentRow === n){
+      solns.push(queenLocations.slice());
       return;
     }
-    _(brd[rowI]).each(function(colVal, colI){
-      if(colVal === 0){
-        recur(rowI+1,addQueen(copyBoard(b), rowI, colI));
+    var rowMines = detectMines(queenLocations, currentRow, n);
+    _(rowMines).each(function(mined,colI){
+      if(mined === 0){
+        var ql = queenLocations.concat([colI]);
+        recur(ql, currentRow + 1);
       }
     });
-    return; //if the end of the each loop is reached
   };
-  recur(0, makeBoard(n));
-  return solnBoards;
+  recur([],0);
+  return solns;
 };
 
+//window.makeSolBoard = 
+
+// Change makeBoard to makeRow - n elements all 0
+// Algorithm that checks where to place piece
+  // for previous queens (in final queen array)
+    // cannot place in THIS row at 
+    // prevQueen Column or (prevQ column)±(current - q's row),
+    // when we find placement area, add q, recurse.
+
+//boardMaker that turns an array of q positions into a blank board.
 
 
 
-window.addQueen = function(board, row, col){
-  board[row][col] = 1; //this is a queen!
-  var nRow = row + 1;
-  var majCol = col + 1;
-  var minCol = col - 1;
-  //adds landmines:
-  _(board).each(function(r) {
-    if (!r[col]){ //adds vertical landmines
-      r[col] = -1;
-    }
-    if(board[nRow] !== undefined){
-      if(board[nRow][majCol] !== undefined){
-        board[nRow][majCol] = -1;
-      }
-      if(board[nRow][minCol] !== undefined){
-        board[nRow][minCol] = -1;
-      }
-    }
-    nRow++;
-    majCol++;
-    minCol--;
-  });
-  return board;
-};
+// window.addQueen = function(board, row, col){
+//   board[row][col] = 1; //this is a queen!
+//   var nRow = row + 1;
+//   var majCol = col + 1;
+//   var minCol = col - 1;
+//   //adds landmines:
+//   _(board).each(function(r) {
+//     if (!r[col]){ //adds vertical landmines
+//       r[col] = -1;
+//     }
+//     if(board[nRow] !== undefined){
+//       if(board[nRow][majCol] !== undefined){
+//         board[nRow][majCol] = -1;
+//       }
+//       if(board[nRow][minCol] !== undefined){
+//         board[nRow][minCol] = -1;
+//       }
+//     }
+//     nRow++;
+//     majCol++;
+//     minCol--;
+//   });
+//   return board;
+// };
+
+
 
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
