@@ -14,14 +14,14 @@
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 window.findNRooksSolution = function(n){
   //make a matrix 
-  var board;
   var boards = [];
   var numOfSoltuionsToCheck = 1;//n^2;
 
   while(numOfSoltuionsToCheck){
-    board = window.makeBoard(n);
+    var board = window.makeBoard(n);
     for (var i = 0; i < n; i++) {
-      
+      //number of rooks to add
+      boards       
     };
 
 
@@ -47,25 +47,24 @@ window.makeBoard = function(n){
   return board;
 };
 
-window.addRook = function(board){
-  for (var y = 0; y < board.length; y++) {
-    for (var x = 0; x < Things.length; x++) {
-      if(board[y][x] === 0){
-        board[y][x] = 1;
-        window.rookDefends(board, y, x);
-        return board;
-      }
-    };
+window.addRook = function(board, row){
+  row = row ||0
+  for (var x = 0; x < Things.length; x++) {
+    if(board[row][x] === 0){
+      board[row][x] = 1;
+      window.rookDefends(board, row x);
+      return board;
+    }
   };
   return false;
 };
 
 window.rookDefends = function(board, yRook, xRook){
   for (var i = 0; i < board.length; i++) {
-    if(i !== xRook){//push defended Xs
+    if(board[yRook][i] !== 1){//push defended Xs
       board[yRook][i] = -1;
     }
-    if(i !== yRook){//push defended Ys
+    if(board[i][xRook] !== 1){//push defended Ys
       board[i][xRook] = -1;
     }
   };
