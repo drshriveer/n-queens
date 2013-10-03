@@ -13,22 +13,53 @@
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 window.findNRooksSolution = function(n){
   //var solution = undefined; //fixme
-  //make new board
-    //adds n rooks to the board
-    //if board !false add it to a list of boards
-    // change starting position of first rook, clear board, and repeat
+
   //---------------------------------------------------------------------
   //recurse(rowI,board)
-    //add rook to column 'i' in row 
+    //add rook to column 'i' in row //for loop 
     //recurse with board having added rook and rook's landmines
-    // recurse(rowI+1,newBoard)
+      //recurse(rowI+1,newBoard)
     //baseCase: add sol'n to solnBoards.
 
-  //solnBoards.length = # of solutionsv 
+  //solnBoards.length = # of solutions
 
+ //  debugging tells me that  something is wrong with closure scope.
+  var solnBoards = [];
+  var recur = function(rowI, bz) {
+    var brd = bz.slice(); 
+    debugger;
+    if(rowI === n){
+      solnBoards.push(brd.slice());
+      return;
+    }
+    _(brd[rowI]).each(function(colVal, colI){
+      debugger;
+      if(colVal === 0){
+        recur(rowI+1,addRook(brd, rowI, colI));
+      }
+    });
+    //if the end of the each loop is reached
+    return;
 
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
-  return solution;
+  };
+
+  // var recur = function(rowI, board){
+  //   if (rowI === n){
+  //     solnBoards.push(board);
+  //   } else {
+  //     for(var i = 0; i < board[rowI].length; i++){
+  //       if(board[rowI][i] === 0){
+  //         recur(rowI+1, addRook(board,rowI, i));
+  //       }
+  //     }
+  //   }
+  // };
+
+  var nb = makeBoard(n);
+  recur(0,nb);
+  return solnBoards;
+  //console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  //return solution;
 };
 
 window.makeBoard = function(n){
@@ -43,15 +74,10 @@ window.makeBoard = function(n){
 };
 
 window.addRook = function(board, row, col){
-  var newBoard = board.slice(); //needed ???
-  newBoard[row][col] = 1; //this is a rook!
-  return window.addLandmines(newBoard, row, col);
+  //var newBoard = board.slice(); //needed ???
+  board[row][col] = 1; //this is a rook!
+  return window.addLandmines(board, row, col);
 };
-//addrook (board, row, col)
-  //add to that space
-  //call addLandmines 
-  //return new board
-
 
 window.addLandmines = function(board, row, col) {
   _(board).each(function(row) {
@@ -59,9 +85,6 @@ window.addLandmines = function(board, row, col) {
   });
   return board;
 };
-
-//addLandmines
-  //adds -1 to the horz and vert 
 
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
