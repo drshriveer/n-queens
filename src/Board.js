@@ -79,11 +79,18 @@
     // 
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex){
-      return false; // fixme
+      return (1 < _.reduce(this.rows()[rowIndex], function(memo, current){
+              return memo + current;
+            }, 0));
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function(){
+      for (var i = 0; i < this.rows().length; i++) {
+        if(this.hasRowConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -94,11 +101,18 @@
     // 
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex){
-      return false; // fixme
+      return (1 < _.reduce(this.rows(), function(memo, current) {
+              return memo + current[colIndex];
+            }, 0));
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function(){
+      for (var i = 0; i < this.rows().length; i++) {
+        if(this.hasColConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -109,11 +123,37 @@
     // 
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow){
-      return false; // fixme
+      var diagI = majorDiagonalColumnIndexAtFirstRow;
+      var leng = this.rows().length;
+      var numOfDiagonals = this.rows().length*2 - 1;
+      var diagonal = [];
+      //i think we're over thinking.   enginers:  just make shit work.
+
+      if(diagI < leng ){
+        for (var i = 0; i <= diagI; i++) {
+          diagonal.push(this.rows()[leng - 1 - i][diagI - i]);
+        }
+      }
+      else if(diagI > leng - 1){
+        var startX = diagI - leng + 1;
+        for (var i = 0; i < Math.abs(diagI - numOfDiagonals); i++) {
+          diagonal.push(this.rows()[i][startX + i]);
+        }
+      }
+      //console.log(diagonal);
+      return (1 < _.reduce(diagonal, function(memo, val) {
+              return memo + val;
+            }, 0));
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function(){
+      var numOfDiagonals = this.rows().length*2 - 1;
+      for (var i = 1; i < numOfDiagonals-1; i++) {
+        if(this.hasMajorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -124,11 +164,37 @@
     // 
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow){
-      return false; // fixme
+      var diagI = minorDiagonalColumnIndexAtFirstRow;
+      var leng = this.rows().length;
+      var numOfDiagonals = this.rows().length*2 - 1;
+      var diagonal = [];
+      //i think we're over thinking.   enginers:  just make shit work.
+
+      if(diagI < leng ){
+        for (var i = 0; i <= diagI; i++) {
+          diagonal.push(this.rows()[diagI - i][i]);
+        }
+      }
+      else if(diagI > leng - 1){
+        var startX = Math.abs(diagI - leng -1);
+        for (var i = 0; i < (numOfDiagonals - diagI); i++) {
+          diagonal.push(this.rows()[leng-1-i][startX+i]);
+        }
+      }
+      console.log(diagonal);
+      return (1 < _.reduce(diagonal, function(memo, val) {
+              return memo + val;
+            }, 0));
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function(){
+      var numOfDiagonals = this.rows().length*2 - 1;
+      for (var i = 1; i < numOfDiagonals-1; i++) {
+        if(this.hasMinorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     }
 
