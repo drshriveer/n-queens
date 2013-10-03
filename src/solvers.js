@@ -74,7 +74,7 @@ window.detectMines = function(pieceLocations, currentRow, n, pieceType){
     return mineLocation;
 };
 
-
+// ===== BELOW BE HELPERS! TRUST IN THEM! ======
 window.makeEmptyBoard = function(n){
   var board = [];
   for (var i = 0; i < n; i++) {
