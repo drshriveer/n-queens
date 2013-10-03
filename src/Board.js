@@ -181,7 +181,6 @@
           diagonal.push(this.rows()[leng-1-i][startX+i]);
         }
       }
-      console.log(diagonal);
       return (1 < _.reduce(diagonal, function(memo, val) {
               return memo + val;
             }, 0));
