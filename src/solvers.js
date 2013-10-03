@@ -53,6 +53,13 @@ window.addRook = function(board, row, col){
   //return new board
 
 
+window.addLandmines = function(board, row, col) {
+  _(board).each(function(row) {
+    if (!row[col]){ row[col] = -1; }
+  });
+  return board;
+};
+
 //addLandmines
   //adds -1 to the horz and vert 
 
