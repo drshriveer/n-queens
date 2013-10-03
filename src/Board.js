@@ -140,7 +140,7 @@
           diagonal.push(this.rows()[i][startX + i]);
         }
       }
-      console.log(diagonal);
+      //console.log(diagonal);
       return (1 < _.reduce(diagonal, function(memo, val) {
               return memo + val;
             }, 0));
@@ -164,7 +164,7 @@
     // 
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow){
-      var diagI = majorDiagonalColumnIndexAtFirstRow;
+      var diagI = minorDiagonalColumnIndexAtFirstRow;
       var leng = this.rows().length;
       var numOfDiagonals = this.rows().length*2 - 1;
       var diagonal = [];
@@ -189,6 +189,12 @@
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function(){
+      var numOfDiagonals = this.rows().length*2 - 1;
+      for (var i = 1; i < numOfDiagonals-1; i++) {
+        if(this.hasMinorDiagonalConflictAt(i)){
+          return true;
+        }
+      }
       return false; // fixme
     }
 
