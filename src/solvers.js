@@ -10,64 +10,71 @@
 // (There are also optimizations that will allow you to skip a lot of the dead search space)
 // take a look at solversSpec.js to see what the tests are expecting
 
-
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 window.findNRooksSolution = function(n){
-  //make a matrix 
-  var boards = [];
-  var numOfSoltuionsToCheck = 1;//n^2;
-
-  while(numOfSoltuionsToCheck){
-    var board = window.makeBoard(n);
-    for (var i = 0; i < n; i++) {
-      //number of rooks to add
-      boards       
-    };
-
-
-    numOfSoltuionsToCheck--;
-  }
-
 
   //var solution = undefined; //fixme
 
-  //console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
-  //return solution;
-};
+  //---------------------------------------------------------------------
+  //recurse(rowI,board)
+    //add rook to column 'i' in row //for loop 
+    //recurse with board having added rook and rook's landmines
+      //recurse(rowI+1,newBoard)
+    //baseCase: add sol'n to solnBoards.
+
+  //solnBoards.length = # of solutions
+
+ //  debugging tells me that  something is wrong with closure scope.
+  var solnBoards = [];
+  var recur = function(rowI, b) {
+    var brd = boardCopy(b); 
+    if(rowI === n){
+      solnBoards.push(boardCopy(brd));
+      return;
+    }
+    _(brd[rowI]).each(function(colVal, colI){
+      if(colVal === 0){
+        recur(rowI+1,addRook(boardCopy(brd), rowI, colI));
+      }
+    });
+    //if the end of the each loop is reached
+    return;
+
+  };
+
+  var nb = makeBoard(n);
+  recur(0,nb);
+  return solnBoards;
+
+window.boardCopy = function(b){
+  var nb = [];
+  for(var i = 0; i < b.length ; i++){
+    nb.push(b[i].slice());
+  }
+  return nb;
+}
 
 window.makeBoard = function(n){
   var board = [];
-  var row = [];
   for (var i = 0; i < n; i++) {
-    for(var j = 0; j < n; i++){
-      row.push(0);
+    board.push([]);
+    for (var j = 0; j < n; j++) {
+      board[i].push(0);
     }
-    board.push(row);
-  };
+  }
   return board;
 };
 
-window.addRook = function(board, row){
-  row = row ||0
-  for (var x = 0; x < Things.length; x++) {
-    if(board[row][x] === 0){
-      board[row][x] = 1;
-      window.rookDefends(board, row x);
-      return board;
-    }
-  };
-  return false;
+window.addRook = function(board, row, col){
+  var newBoard = boardCopy(board); //needed ???
+  newBoard[row][col] = 1; //this is a rook!
+  return window.addLandmines(newBoard, row, col);
 };
 
-window.rookDefends = function(board, yRook, xRook){
-  for (var i = 0; i < board.length; i++) {
-    if(board[yRook][i] !== 1){//push defended Xs
-      board[yRook][i] = -1;
-    }
-    if(board[i][xRook] !== 1){//push defended Ys
-      board[i][xRook] = -1;
-    }
-  };
+window.addLandmines = function(board, row, col) {
+  _(board).each(function(row) {
+    if (!row[col]){ row[col] = -1; }
+  });
   return board;
 };
 
