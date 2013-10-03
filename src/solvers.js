@@ -12,127 +12,46 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 window.findNRooksSolution = function(n){
-  solution = findAllRookBoards(n)[0];
+  var allRSoln = solutionSearch(n, 'rook');
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  var solution = makeSolBoard(allRSoln[0],n);
   return solution;
 };
 
-window.findAllRookBoards = function(n){
-  var solnBoards = [];
-  var recur = function(rowI, b) {
-    var brd = copyBoard(b); 
-    if(rowI === n){
-      solnBoards.push(copyBoard(brd));
-      return;
-    }
-    _(brd[rowI]).each(function(colVal, colI){
-      if(colVal === 0){
-        recur(rowI+1,addRook(copyBoard(b), rowI, colI));
-      }
-    });
-    //if the end of the each loop is reached
-    return;
-
-  };
-
-  recur(0, makeBoard(n));
-  return solnBoards;
-};
-
-window.copyBoard = function(b){
-  var brd = [];
-  _(b).each(function(row){
-    brd.push(row.slice());
-  });
-  return brd;
-};
-
-window.makeBoard = function(n){
-  if(n === 1){
-    return [[0]];
-  }
-  var board = [];
-  for (var i = 0; i < n; i++) {
-    board.push([]);
-    for (var j = 0; j < n; j++) {
-      board[i].push(0);
-    }
-  }
-  return board;
-};
-
-window.addRook = function(board, row, col){
-  board[row][col] = 1; //this is a rook!
-  //adds landmines:
-  _(board).each(function(row) {
-    if (!row[col]){ row[col] = -1; }
-  });
-  return board;
-};
-
 window.countNRooksSolutions = function(n){
-  var solutionCount = findAllRookBoards(n).length;
+  var solutionCount = solutionSearch(n, 'rook').length;
   console.log('Number of solutions for ' + n +' rooks:', solutionCount);
   return solutionCount;
 };
 
-// window.findAllQueenBoards = function(n){
-//   var solnBoards = [];
-//   var recur = function(rowI, b) {
-//     var brd = copyBoard(b); 
-//     if(rowI === n){
-//       solnBoards.push(copyBoard(brd));
-//       return;
-//     }
-//     _(brd[rowI]).each(function(colVal, colI){
-//       if(colVal === 0){
-//         recur(rowI+1,addQueen(copyBoard(b), rowI, colI));
-//       }
-//     });
-//     return; //if the end of the each loop is reached
-//   };
-//   recur(0, makeBoard(n));
-//   return solnBoards;
-// };
-
-window.makeRow = function(n) {
-  var row = [];
-  for (var i = 0; i < n; i++) {
-    row[i] = 0;
-  }
-  return row;
+// return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
+window.findNQueensSolution = function(n){
+  var allQSoln = solutionSearch(n, 'queen');
+  var solution = makeSolBoard(allQSoln[0],n);
+  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  return solution;
 };
 
-window.detectMines = function(queenLocations, currentRow, n){
-  //queenLocations should not exceed current number of queen placements!!
-  var mineLocation = makeRow(n);
-  _(queenLocations).each(function(col, row){
-    mineLocation[col] = -1;
-    sideMineA = col + (currentRow - row);
-    sideMineB = col - (currentRow - row);
-    if(sideMineA < n){mineLocation[sideMineA] = -1;}
-    if(sideMineB >= 0){mineLocation[sideMineB] = -1;}
-  });
-  return mineLocation;
-
-  // Add the correct number at the index of queenLocations
-  // When this function begins, queenLocations[currentRow] should be 0
-  // Analyze the previous indices to find if/what the current index should be
+// return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
+window.countNQueensSolutions = function(n){
+  var solutionCount = solutionSearch(n, 'queen').length; //fixme
+  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  return solutionCount;
 };
 
-window.findAllQueens = function(n){
+// ========  RECURSION SEARCHER  ==================
+window.solutionSearch = function(n, pieceType){
   var solns = [];
-
-  var recur = function(queenLocations,currentRow){
+  var recur = function(pieceLocations, currentRow){
     if(currentRow === n){
-      solns.push(queenLocations.slice());
+      solns.push(pieceLocations.slice());
       return;
     }
-    var rowMines = detectMines(queenLocations, currentRow, n);
+    var rowMines = detectMines(pieceLocations, currentRow, n, pieceType);
     _(rowMines).each(function(mined,colI){
       if(mined === 0){
-        var ql = queenLocations.concat([colI]);
-        recur(ql, currentRow + 1);
+        var rl = pieceLocations.concat([colI]);
+        recur(rl, currentRow + 1);
       }
     });
   };
@@ -140,31 +59,57 @@ window.findAllQueens = function(n){
   return solns;
 };
 
+// ========= FINDS BAD LOCATIONS ================
+window.detectMines = function(pieceLocations, currentRow, n, pieceType){
+    var mineLocation = makeEmptyRow(n);
+    _(pieceLocations).each(function(col, row){
+      mineLocation[col] = -1;
+      if(pieceType === 'queen'){
+        sideMineA = col + (currentRow - row);
+        sideMineB = col - (currentRow - row);
+        if(sideMineA < n){mineLocation[sideMineA] = -1;}
+        if(sideMineB >= 0){mineLocation[sideMineB] = -1;}
+      }
+    });
+    return mineLocation;
+};
+
+
+window.makeEmptyBoard = function(n){
+  var board = [];
+  for (var i = 0; i < n; i++) {
+    board.push(makeEmptyRow(n));
+  }
+  return board;
+};
+
+
+window.makeEmptyRow = function(n) {
+  var row = [];
+  for (var i = 0; i < n; i++) {
+    row[i] = 0;
+  }
+  return row;
+};
+
 window.makeSolBoard = function(queenSolution, n){
   var solnBoard = [];
   if(queenSolution === undefined){
-    return makeBoard(n);
+    return makeEmptyBoard(n);
   }
   for (var i = 0; i < n; i++) {
-    var row = makeRow(n);
+    var row = makeEmptyRow(n);
     row[queenSolution[i]] = 1;
     solnBoard.push(row);
   }
   return solnBoard;
 };
 
-// return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
-window.findNQueensSolution = function(n){
-  var allQSoln = findAllQueens(n);
-  var solution = makeSolBoard(allQSoln[0],n) || makeBoard(n);
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
-};
 
-
-// return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
-window.countNQueensSolutions = function(n){
-  var solutionCount = findAllQueens(n).length; //fixme
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+window.findExecutionTime = function(fn, args){
+  var startTime = new Date();
+  fn(args);
+  var endTime = new Date();
+  var time = endTime - startTime;
+  console.log("Time Elapsed: ", time, "ms");
 };
