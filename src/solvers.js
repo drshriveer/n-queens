@@ -12,30 +12,22 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 window.findNRooksSolution = function(n){
-  //var solution = undefined; //fixme
+  return findAllRookBoards(n)[0];
+  //console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  //return solution;
+};
 
-  //---------------------------------------------------------------------
-  //recurse(rowI,board)
-    //add rook to column 'i' in row //for loop 
-    //recurse with board having added rook and rook's landmines
-      //recurse(rowI+1,newBoard)
-    //baseCase: add sol'n to solnBoards.
-
-  //solnBoards.length = # of solutions
-
- //  debugging tells me that  something is wrong with closure scope.
+window.findAllRookBoards = function(n){
   var solnBoards = [];
-  var recur = function(rowI, bz) {
-    var brd = bz.slice(); 
-    debugger;
+  var recur = function(rowI, b) {
+    var brd = copyBoard(b); 
     if(rowI === n){
-      solnBoards.push(brd.slice());
+      solnBoards.push(copyBoard(brd));
       return;
     }
     _(brd[rowI]).each(function(colVal, colI){
-      debugger;
       if(colVal === 0){
-        recur(rowI+1,addRook(brd, rowI, colI));
+        recur(rowI+1,addRook(copyBoard(b), rowI, colI));
       }
     });
     //if the end of the each loop is reached
@@ -43,23 +35,16 @@ window.findNRooksSolution = function(n){
 
   };
 
-  // var recur = function(rowI, board){
-  //   if (rowI === n){
-  //     solnBoards.push(board);
-  //   } else {
-  //     for(var i = 0; i < board[rowI].length; i++){
-  //       if(board[rowI][i] === 0){
-  //         recur(rowI+1, addRook(board,rowI, i));
-  //       }
-  //     }
-  //   }
-  // };
-
-  var nb = makeBoard(n);
-  recur(0,nb);
+  recur(0, makeBoard(n));
   return solnBoards;
-  //console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
-  //return solution;
+};
+
+window.copyBoard = function(b){
+  var brd = [];
+  _(b).each(function(row){
+    brd.push(row.slice());
+  });
+  return brd;
 };
 
 window.makeBoard = function(n){
@@ -74,12 +59,8 @@ window.makeBoard = function(n){
 };
 
 window.addRook = function(board, row, col){
-  //var newBoard = board.slice(); //needed ???
   board[row][col] = 1; //this is a rook!
-  return window.addLandmines(board, row, col);
-};
-
-window.addLandmines = function(board, row, col) {
+  //adds landmines:
   _(board).each(function(row) {
     if (!row[col]){ row[col] = -1; }
   });
@@ -89,10 +70,63 @@ window.addLandmines = function(board, row, col) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n){
-  var solutionCount = undefined; //fixme
-
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+  var solutionCount = findAllRookBoards(n).length;
+  //console.log('Number of solutions for ' + n +' rooks:', solutionCount);
   return solutionCount;
+};
+
+
+
+
+
+window.findAllQueenBoards = function(n){
+  var solnBoards = [];
+  var recur = function(rowI, b) {
+    // debugger;
+    var brd = copyBoard(b); 
+    if(rowI === n){
+      // debugger;
+      solnBoards.push(copyBoard(brd));
+      return;
+    }
+    _(brd[rowI]).each(function(colVal, colI){
+      if(colVal === 0){
+        recur(rowI+1,addQueen(copyBoard(b), rowI, colI));
+      }
+    });
+    return; //if the end of the each loop is reached
+  };
+
+  recur(0, makeBoard(n));
+  return solnBoards;
+};
+
+
+
+
+window.addQueen = function(board, row, col){
+  board[row][col] = 1; //this is a queen!
+  var nRow = row + 1;
+  var majCol = col + 1;
+  var minCol = col - 1;
+  //adds landmines:
+  _(board).each(function(r) {
+    if (!r[col]){ //adds vertical landmines
+      r[col] = -1;
+    }
+    if(board[nRow] !== undefined){
+      if(board[nRow][majCol] !== undefined){
+        board[nRow][majCol] = -1;
+      }
+      if(board[nRow][minCol] !== undefined){
+        board[nRow][minCol] = -1;
+      }
+    }
+    nRow++;
+    majCol++;
+    minCol--;
+  });
+  return board;
 };
 
 
