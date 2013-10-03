@@ -39,20 +39,18 @@ window.makeBoard = function(n){
       board[i].push(0);
     }
   }
-
   return board;
 };
 
-
-//make a board with 0s ()
-  //returns empty board
-
-
-//addrook (board, row)
-  //search for the first empty space
+window.addRook = function(board, row, col){
+  var newBoard = board.slice(); //needed ???
+  newBoard[row][col] = 1; //this is a rook!
+  return window.addLandmines(newBoard, row, col);
+};
+//addrook (board, row, col)
   //add to that space
   //call addLandmines 
-  //return new board || false if cannot add it
+  //return new board
 
 
 //addLandmines
