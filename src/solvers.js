@@ -140,50 +140,23 @@ window.findAllQueens = function(n){
   return solns;
 };
 
-//window.makeSolBoard = 
-
-// Change makeBoard to makeRow - n elements all 0
-// Algorithm that checks where to place piece
-  // for previous queens (in final queen array)
-    // cannot place in THIS row at 
-    // prevQueen Column or (prevQ column)±(current - q's row),
-    // when we find placement area, add q, recurse.
-
-//boardMaker that turns an array of q positions into a blank board.
-
-
-
-// window.addQueen = function(board, row, col){
-//   board[row][col] = 1; //this is a queen!
-//   var nRow = row + 1;
-//   var majCol = col + 1;
-//   var minCol = col - 1;
-//   //adds landmines:
-//   _(board).each(function(r) {
-//     if (!r[col]){ //adds vertical landmines
-//       r[col] = -1;
-//     }
-//     if(board[nRow] !== undefined){
-//       if(board[nRow][majCol] !== undefined){
-//         board[nRow][majCol] = -1;
-//       }
-//       if(board[nRow][minCol] !== undefined){
-//         board[nRow][minCol] = -1;
-//       }
-//     }
-//     nRow++;
-//     majCol++;
-//     minCol--;
-//   });
-//   return board;
-// };
-
-
-
+window.makeSolBoard = function(queenSolution, n){
+  var solnBoard = [];
+  if(queenSolution === undefined){
+    return makeBoard(n);
+  }
+  for (var i = 0; i < n; i++) {
+    var row = makeRow(n);
+    row[queenSolution[i]] = 1;
+    solnBoard.push(row);
+  }
+  return solnBoard;
+};
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n){
-  var solution = findAllQueenBoards(n)[0] || makeBoard(n);
+  var allQSoln = findAllQueens(n);
+  var solution = makeSolBoard(allQSoln[0],n) || makeBoard(n);
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
 };
@@ -191,7 +164,7 @@ window.findNQueensSolution = function(n){
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n){
-  var solutionCount = findAllQueenBoards(n).length; //fixme
+  var solutionCount = findAllQueens(n).length; //fixme
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
