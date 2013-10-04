@@ -76,32 +76,61 @@ window.detectMines = function(pieceLocations, currentRow, n, pieceType){
 
 window.bitWiseSolutionSearch = function(n){
   var solns = [];
-  //minez[0] //number for left shift
-  //minez[1] //number for middle
-  //minez[2] //number for right shift
-
+                          //minez[0] //number for left shift
+                          //minez[1] //number for middle
+                          //minez[2] //number for right shift
   var recur = function(pieceLocations, currentRow, mines){
     if(currentRow === n){
       solns.push(pieceLocations.slice());
       return;
     }
-    //combine for iteration
     var antiMINE = (mines[0] & mines[1] & mines[2]).toString(2);
-
     for (var i = antiMINE.length - 1; i >= 0; i--) {
       if(+antiMINE[i]){ //okay to add a piece 
         var minez = coppyr(mines);
         var adjI = (n- antiMINE.length)+i;//this i refers to the column index;
         var nPieceLocations = pieceLocations.concat([adjI]); //added piece
-        minez[0] = minez[0] << 1; //SHIFT LEFT! then add new mine
-        minez[0] += 1; // add one to the end of the line
-        if(minez[0] > num){ minez[0] -= Math.pow(2,n); } //CONTAIN the bit (not bigger than n!
-        if(adjI > 0){minez[0] = minez[0] & (num - Math.pow(2,n-adjI))};
-        minez[1] = minez[1] & (num - Math.pow(2,n-adjI-1));//ADD COLUMN
-        minez[2] = minez[2] >> 1;//SHIFT RIGHT! then add new mine
-        minez[2] += Math.pow(2, n-1) //make sure there is an end bit.
-        if((n-adjI-2)>=0){minez[2] = minez[2] & (num - Math.pow(2,n-adjI-2));} // take away the OKAY solution
+        minez[0] = minez[0] << 1;                           //shift left
+        minez[0] += 1;                                      //add to the end of the line
+        minez[0] = minez[0] & (num - Math.pow(2,n-adjI));   //take away the okay sol'n
+        minez[1] = minez[1] & (num - Math.pow(2,n-adjI-1)); //take away col
+        minez[2] = minez[2] >> 1;                           //shift right
+        minez[2] += Math.pow(2, n-1)                        //add end bit.
+        minez[2] = minez[2] & (num - Math.pow(2,n-adjI-2)); // take away the okay sol'n
         recur(nPieceLocations, currentRow + 1, minez); //recur
+      }  
+    };
+  };
+  // ----- VERY IMPORTANT DO NOT ERASE
+  var num = 0;
+  for (var i = n-1; i >= 0; i--) {
+    num += Math.pow(2,i);
+  };
+  // -----
+  recur([],0,[num, num, num]);
+  return solns;
+};
+
+window.bitWiseNumSolutionSearch = function(n){
+  var solns = 0;
+  var recur = function(currentRow, mines){
+    if(currentRow === n){
+      solns++;
+      return;
+    }
+    var antiMINE = (mines[0] & mines[1] & mines[2]).toString(2);
+    for (var i = antiMINE.length - 1; i >= 0; i--) {
+      if(+antiMINE[i]){ //okay to add a piece 
+        var minez = coppyr(mines);
+        var adjI = (n- antiMINE.length)+i;//this i refers to the column index;
+        minez[0] = minez[0] << 1;                           //shift left
+        minez[0] += 1;                                      //add to the end of the line
+        minez[0] = minez[0] & (num - Math.pow(2,n-adjI));   //take away the okay sol'n
+        minez[1] = minez[1] & (num - Math.pow(2,n-adjI-1)); //take away col
+        minez[2] = minez[2] >> 1;                           //shift right
+        minez[2] += Math.pow(2, n-1)                        //add end bit.
+        minez[2] = minez[2] & (num - Math.pow(2,n-adjI-2)); // take away the okay sol'n
+        recur(currentRow + 1, minez);                       //recur
       }  
     };
   };
@@ -110,9 +139,8 @@ window.bitWiseSolutionSearch = function(n){
   for (var i = n-1; i >= 0; i--) {
     num += Math.pow(2,i);
   };
-
-
-  recur([],0,[num, num, num]);
+  recur(0,[num, num, num]);
+  console.log("number of solutions: ", solns);
   return solns;
 };
 
@@ -123,14 +151,6 @@ var coppyr = function(array){
   };
   return newArray;
 }
-//tester
-// var n = 4, num = 15, bit = 15;
-// console.log(bit.toString(2));
-// for(var i = 0; i < 5; i++){
-//   bit = bit << 1;
-//   //if(bit > num){bit -= Math.pow(2,n)};
-//   console.log(bit.toString(2));
-// }
 
 // ===== BELOW BE HELPERS! TRUST IN THEM! ======
 window.makeEmptyBoard = function(n){
