@@ -18,7 +18,58 @@
       }
 
       .inConflict{
-          background-color: red;
+        background-color: red;
+      }
+
+      .topBar{
+        background-color: #444;
+        height: 25px;
+        width: 99%;
+        color: #BBB;
+        text-align: center;
+      }
+
+      .menuBar{
+        float: left;
+        width: 130px;
+        height: 400px;
+        background: #ddf;
+      }
+
+      .button{
+        border: 1px solid black;
+        background-color: #CCC;
+        text-align: center;
+        border-radius: 4px;
+      }
+
+      .next{
+        float: right;
+        width: 45px; 
+      }
+
+      .prev{
+        float: left;
+        width: 45px;
+      }
+
+      .calculate{
+        float: right;
+        width: 90px;
+      }
+
+      .current{
+        width: 30px;
+        text-align: center;
+        float: right;
+      }
+
+      .nIn{
+        float: left;
+        border: 1px solid black;
+        width: 30px;
+        background-color: white;
+        text-align: center;
       }
     </style>
   </head>
@@ -29,23 +80,62 @@
     <script src="src/Board.js"></script>
     <script src="src/BoardView.js"></script>
     <script src="src/solvers.js"></script>
+    <div class="topBar"> Use the menu to step though possible solutions! </div>
+    <div class="menuBar">
+      <div>Type N to solve for:</div>
+      <br>
+      <div class="nIn" contenteditable>4</div>
+      <div class="calculate button">calculate</div>
+      <br> <br>
+      <div>solutions: <span class="numOfSol"></span></div>
+      <div class="next button">next</div> <span class="current">0</span><div class="prev button">prev</div>
+    </div>
+    <div class="boardWindow"></div>
     <script>
+      var solutionArray = [];
+      var currentlyDisplaying = 0;
+      var currentN = 4;
+      $('.calculate').on('click',function(e){
+        currentN = +$('.nIn').text();
+        currentlyDisplaying = 0;
+        solutionArray = solutionSearch(currentN,'queen');
+        displayBoard(makeSolBoard(solutionArray[currentlyDisplaying], currentN));
+        $('.numOfSol').text(solutionArray.length);
+        $('.current').text(currentlyDisplaying);
+      });
+      $('.next').on('click',function(e){
+        if(currentlyDisplaying < solutionArray.length-1){
+          currentlyDisplaying++;
+        }
+        displayBoard(makeSolBoard(solutionArray[currentlyDisplaying], currentN));
+        $('.current').text(currentlyDisplaying);
+      });
+      $('.prev').on('click',function(e){
+        if(currentlyDisplaying > 0){
+          currentlyDisplaying--;
+        }
+        displayBoard(makeSolBoard(solutionArray[currentlyDisplaying], currentN));
+        $('.current').text(currentlyDisplaying);
+      });
+
       // This function uses a board visualizer lets you view an interactive version of any piece matrix.
       window.displayBoard = function(matrix){
-        $('body').html(
+        $('.boardWindow').html(
           new BoardView({
             model: new Board(matrix)
           }).render()
         );
       };
-      $(function(){
-        // this is a pre-baked solution for n-queens in the n = 4 case, rendered to the screen using our handy visualizer.
-        displayBoard([
+
+        $(function(){
+        board = [
           [0, 1, 0, 0],
           [0, 0, 0, 1],
           [1, 0, 0, 0],
           [0, 0, 1, 0]
-        ]);
+        ];
+        // this is a pre-baked solution for n-queens in the n = 4 case, rendered to the screen using our handy visualizer.
+        //displayBoard(board);
 
         var n = 4;
         findNRooksSolution(n);
@@ -53,6 +143,8 @@
         findNQueensSolution(n);
         countNQueensSolutions(n);
       });
+
     </script>
+
   </body>
 </html>
