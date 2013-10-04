@@ -60,19 +60,84 @@ window.solutionSearch = function(n, pieceType){
 };
 
 // ========= FINDS BAD LOCATIONS ================
-window.detectMines = function(pieceLocations, currentRow, n, pieceType){
-    var mineLocation = makeEmptyRow(n);
-    _(pieceLocations).each(function(col, row){
-      mineLocation[col] = -1;
-      if(pieceType === 'queen'){
-        sideMineA = col + (currentRow - row);
-        sideMineB = col - (currentRow - row);
-        if(sideMineA < n){mineLocation[sideMineA] = -1;}
-        if(sideMineB >= 0){mineLocation[sideMineB] = -1;}
-      }
-    });
-    return mineLocation;
+// window.detectMines = function(pieceLocations, currentRow, n, pieceType){
+//     var mineLocation = makeEmptyRow(n);
+//     _(pieceLocations).each(function(col, row){
+//       mineLocation[col] = -1;
+//       if(pieceType === 'queen'){
+//         sideMineA = col + (currentRow - row);
+//         sideMineB = col - (currentRow - row);
+//         if(sideMineA < n){mineLocation[sideMineA] = -1;}
+//         if(sideMineB >= 0){mineLocation[sideMineB] = -1;}
+//       }
+//     });
+//     return mineLocation;
+// };
+
+// total structure:
+
+window.bitWiseSolutionSearch = function(n){
+  var solns = [];
+  //minez[0] //number for left shift
+  //minez[1] //number for middle
+  //minez[2] //number for right shift
+
+  var recur = function(pieceLocations, currentRow, mines){
+    if(currentRow === n){
+      solns.push(pieceLocations.slice());
+      return;
+    }
+    //combine for iteration
+    var antiMINE = (mines[0] & mines[1] & mines[2]).toString(2);
+    if(antiMINE.length < n){ antiMINE = padWithZeros(antiMINE,n);}
+    //ITERATE BACKWARDS
+    for (var i = antiMINE.length - 1; i >= 0; i--) {
+      var minez = coppyr(mines);
+      if(+antiMINE[i]){ //okay to add a piece 
+        var nPieceLocations = pieceLocations.concat([i]); //added piece
+        minez[0] = minez[0] << 1; //SHIFT LEFT! then add new mine
+        minez[0] += 1; // add one to the end of the line
+        if(minez[0] > num){ minez[0] -= Math.pow(2,n); } //CONTAIN the bit (not bigger than n!
+        if(i > 0){minez[0] = minez[0] & (num - Math.pow(2,n-i))};
+        minez[1] = minez[1] & (num - Math.pow(2,n-i-1));//ADD COLUMN
+        minez[2] = minez[2] >> 1;//SHIFT RIGHT! then add new mine
+        minez[2] += Math.pow(2, n-1) //make sure there is an end bit.
+        if((n-i-2)>=0){minez[2] = minez[2] & (num - Math.pow(2,n-i-2));} // take away the OKAY solution
+        recur(nPieceLocations, currentRow + 1, minez); //recur
+      }  
+    };
+  };
+  //VERY IMPORTANT DO NOT ERASE
+  var num = 0;
+  for (var i = n-1; i >= 0; i--) {
+    num += Math.pow(2,i);
+  };
+
+
+  recur([],0,[num, num, num]);
+  return solns;
 };
+
+var padWithZeros = function(s, size) {
+    while (s.length < size) {s = "0" + s;}
+    return s;
+};
+
+var coppyr = function(array){
+  newArray = [];
+  for (var i = 0; i < array.length; i++) {
+    newArray[i] = array[i];
+  };
+  return newArray;
+}
+//tester
+// var n = 4, num = 15, bit = 15;
+// console.log(bit.toString(2));
+// for(var i = 0; i < 5; i++){
+//   bit = bit << 1;
+//   //if(bit > num){bit -= Math.pow(2,n)};
+//   console.log(bit.toString(2));
+// }
 
 // ===== BELOW BE HELPERS! TRUST IN THEM! ======
 window.makeEmptyBoard = function(n){
