@@ -98,7 +98,7 @@
       $('.calculate').on('click',function(e){
         currentN = +$('.nIn').text();
         currentlyDisplaying = 0;
-        solutionArray = solutionSearch(currentN,'queen');
+        solutionArray = bitWiseSolutionSearch(currentN);
         displayBoard(makeSolBoard(solutionArray[currentlyDisplaying], currentN));
         $('.numOfSol').text(solutionArray.length);
         $('.current').text(currentlyDisplaying);
